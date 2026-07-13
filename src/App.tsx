@@ -13,7 +13,7 @@ const T = {
       contact: "Contact",
     },
     hero: {
-      badge: "OPEN TO OPPORTUNITIES · PARIS, FRANCE",
+      badge: "OPEN TO GLOBAL OPPORTUNITIES & RELOCATION & REMOTE",
       headline1: "Bridging Business",
       headline2: "Strategy, Engineering",
       headline3: "& AI",
