@@ -13,7 +13,7 @@ const T = {
       contact: "Contact",
     },
     hero: {
-      badge: "OPEN TO GLOBAL OPPORTUNITIES & RELOCATION & REMOTE",
+      badge: "OPEN TO OPPORTUNITIES · PARIS, FRANCE",
       headline1: "Bridging Business",
       headline2: "Strategy, Engineering",
       headline3: "& AI",
@@ -694,7 +694,7 @@ function NetworkViz() {
     const W = canvas.width
     const H = canvas.height
 
-    const nodes = Array.from({ length: 28 }, (_, i) => ({
+    const nodes = Array.from({ length: 32 }, (_, i) => ({
       x: 60 + Math.random() * (W - 120),
       y: 40 + Math.random() * (H - 80),
       vx: (Math.random() - 0.5) * 0.3,
@@ -702,6 +702,7 @@ function NetworkViz() {
       r: 2 + Math.random() * 2.5,
       pulse: Math.random() * Math.PI * 2,
       major: i < 6,
+      purple: i % 3 === 0,
     }))
 
     let t = 0
@@ -718,48 +719,66 @@ function NetworkViz() {
         n.pulse += 0.02
       })
 
+      // Edges — gradient from blue to purple when crossing node types
       nodes.forEach((a, i) => {
         nodes.slice(i + 1).forEach((b) => {
           const dx = a.x - b.x
           const dy = a.y - b.y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < 160) {
-            const alpha = ((1 - dist / 160) * 0.25).toFixed(3)
-            ctx.beginPath()
-            ctx.moveTo(a.x, a.y)
-            ctx.lineTo(b.x, b.y)
-            ctx.strokeStyle = `rgba(59,130,246,${alpha})`
-            ctx.lineWidth = 0.5
-            ctx.stroke()
+            const alpha = (1 - dist / 160) * 0.28
+            if (a.purple !== b.purple) {
+              const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y)
+              grad.addColorStop(0, `rgba(59,130,246,${alpha})`)
+              grad.addColorStop(1, `rgba(139,92,246,${alpha})`)
+              ctx.beginPath()
+              ctx.moveTo(a.x, a.y)
+              ctx.lineTo(b.x, b.y)
+              ctx.strokeStyle = grad
+              ctx.lineWidth = 0.7
+              ctx.stroke()
+            } else {
+              ctx.beginPath()
+              ctx.moveTo(a.x, a.y)
+              ctx.lineTo(b.x, b.y)
+              ctx.strokeStyle = a.purple
+                ? `rgba(139,92,246,${alpha})`
+                : `rgba(59,130,246,${alpha})`
+              ctx.lineWidth = 0.5
+              ctx.stroke()
+            }
           }
         })
       })
 
-      nodes.slice(0, 6).forEach((a, i) => {
+      // Animated pulses — alternating blue and purple
+      nodes.slice(0, 8).forEach((a, i) => {
         const b = nodes[(i * 4 + 2) % nodes.length]
         const progress = (Math.sin(t + i * 1.2) + 1) / 2
         const px = a.x + (b.x - a.x) * progress
         const py = a.y + (b.y - a.y) * progress
         ctx.beginPath()
-        ctx.arc(px, py, 2, 0, Math.PI * 2)
-        ctx.fillStyle = "rgba(59,130,246,0.8)"
+        ctx.arc(px, py, 2.5, 0, Math.PI * 2)
+        ctx.fillStyle = i % 2 === 0 ? "rgba(59,130,246,0.85)" : "rgba(167,139,250,0.85)"
         ctx.fill()
       })
 
       nodes.forEach((n) => {
         const pulse = (Math.sin(n.pulse) + 1) / 2
+        const isBlue = !n.purple
+        const r = isBlue ? "59,130,246" : "139,92,246"
         if (n.major) {
           ctx.beginPath()
-          ctx.arc(n.x, n.y, n.r + 4 + pulse * 3, 0, Math.PI * 2)
-          ctx.strokeStyle = `rgba(59,130,246,${0.08 + pulse * 0.08})`
+          ctx.arc(n.x, n.y, n.r + 5 + pulse * 4, 0, Math.PI * 2)
+          ctx.strokeStyle = `rgba(${r},${0.1 + pulse * 0.12})`
           ctx.lineWidth = 1
           ctx.stroke()
         }
         ctx.beginPath()
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
         ctx.fillStyle = n.major
-          ? `rgba(59,130,246,${0.7 + pulse * 0.3})`
-          : `rgba(138,148,166,${0.4 + pulse * 0.2})`
+          ? `rgba(${r},${0.75 + pulse * 0.25})`
+          : `rgba(${r},${0.35 + pulse * 0.25})`
         ctx.fill()
       })
 
@@ -791,12 +810,37 @@ function Hero() {
         overflow: "hidden",
       }}
     >
+      {/* Aurora nebula blobs */}
+      <div style={{
+        position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+      }}>
+        <div style={{
+          position: "absolute", top: "-10%", right: "10%",
+          width: 600, height: 600, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(139,92,246,0.09) 0%, transparent 70%)",
+          filter: "blur(40px)",
+        }} />
+        <div style={{
+          position: "absolute", bottom: "5%", left: "-5%",
+          width: 500, height: 500, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)",
+          filter: "blur(48px)",
+        }} />
+        <div style={{
+          position: "absolute", top: "40%", right: "30%",
+          width: 320, height: 320, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%)",
+          filter: "blur(32px)",
+        }} />
+      </div>
+
+      {/* Grid */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px)",
+            "linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px)",
           backgroundSize: "64px 64px",
         }}
       />
@@ -821,10 +865,10 @@ function Hero() {
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
-              border: "1px solid rgba(59,130,246,0.3)",
+              border: "1px solid rgba(139,92,246,0.35)",
               padding: "6px 14px",
               marginBottom: 40,
-              background: "rgba(59,130,246,0.06)",
+              background: "rgba(139,92,246,0.07)",
             }}
           >
             <div
@@ -832,12 +876,12 @@ function Hero() {
                 width: 6,
                 height: 6,
                 borderRadius: "50%",
-                background: "#3B82F6",
-                boxShadow: "0 0 8px rgba(59,130,246,0.8)",
+                background: "#8B5CF6",
+                boxShadow: "0 0 10px rgba(139,92,246,0.9)",
                 animation: "pulse 2s infinite",
               }}
             />
-            <span style={{ color: "#3B82F6", fontSize: 11, fontWeight: 600, letterSpacing: "0.1em" }}>
+            <span style={{ color: "#A78BFA", fontSize: 11, fontWeight: 600, letterSpacing: "0.1em" }}>
               {t.badge}
             </span>
           </div>
@@ -856,7 +900,13 @@ function Hero() {
             <br />
             {t.headline2}
             <br />
-            <span style={{ color: "#3B82F6", fontWeight: 700 }}>{t.headline3}</span>
+            <span style={{
+              fontWeight: 700,
+              background: "linear-gradient(90deg, #3B82F6 0%, #8B5CF6 60%, #A78BFA 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>{t.headline3}</span>
           </h1>
 
           <p
@@ -983,11 +1033,16 @@ function CTAButton({
     border: "1px solid",
     fontFamily: "inherit",
     ...(primary
-      ? { background: hovered ? "#2563EB" : "#3B82F6", color: "#F8F7F4", borderColor: hovered ? "#2563EB" : "#3B82F6" }
+      ? {
+          background: hovered ? "#7C3AED" : "#3B82F6",
+          color: "#F8F7F4",
+          borderColor: hovered ? "#7C3AED" : "#3B82F6",
+          boxShadow: hovered ? "0 0 24px rgba(139,92,246,0.4)" : "none",
+        }
       : {
           background: "transparent",
-          color: hovered ? "#F8F7F4" : "rgba(248,247,244,0.7)",
-          borderColor: hovered ? "rgba(248,247,244,0.4)" : "rgba(248,247,244,0.2)",
+          color: hovered ? "#C4B5FD" : "rgba(248,247,244,0.7)",
+          borderColor: hovered ? "rgba(167,139,250,0.5)" : "rgba(248,247,244,0.2)",
         }),
   }
 
@@ -1022,11 +1077,17 @@ function Section({
   )
 }
 
-function SectionLabel({ dark, children }: { dark?: boolean; children: string }) {
+function SectionLabel({ dark, purple, children }: { dark?: boolean; purple?: boolean; children: string }) {
+  const color = purple ? "#8B5CF6" : "#3B82F6"
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 56 }}>
-      <div style={{ width: 32, height: 1, background: "#3B82F6" }} />
-      <span style={{ color: "#3B82F6", fontSize: 11, fontWeight: 600, letterSpacing: "0.14em" }}>
+      <div style={{
+        width: 32, height: 1,
+        background: purple
+          ? "linear-gradient(90deg, #8B5CF6, #A78BFA)"
+          : "#3B82F6",
+      }} />
+      <span style={{ color, fontSize: 11, fontWeight: 600, letterSpacing: "0.14em" }}>
         {children.toUpperCase()}
       </span>
     </div>
@@ -1087,8 +1148,8 @@ function PillarCard({ icon, title, desc }: { icon: string; title: string; desc: 
     <div
       style={{
         padding: "28px 32px",
-        border: `1px solid ${hovered ? "#3B82F6" : "#E2E8F0"}`,
-        background: hovered ? "rgba(59,130,246,0.02)" : "#FAFAF9",
+        border: `1px solid ${hovered ? "#8B5CF6" : "#E2E8F0"}`,
+        background: hovered ? "rgba(139,92,246,0.03)" : "#FAFAF9",
         transition: "all 0.2s",
         cursor: "default",
         display: "flex",
@@ -1165,9 +1226,9 @@ function ExperienceRow({
       <div
         style={{
           position: "absolute", left: -4, top: 10, width: 9, height: 9, borderRadius: "50%",
-          background: hovered ? "#3B82F6" : "rgba(59,130,246,0.4)",
+          background: hovered ? "linear-gradient(135deg, #3B82F6, #8B5CF6)" : "rgba(139,92,246,0.4)",
           border: "2px solid #0B1220",
-          boxShadow: hovered ? "0 0 12px rgba(59,130,246,0.5)" : "none",
+          boxShadow: hovered ? "0 0 14px rgba(139,92,246,0.6)" : "none",
           transition: "all 0.2s",
         }}
       />
@@ -1194,7 +1255,7 @@ function ExperienceRow({
           onClick={() => setExpanded(!expanded)}
           style={{
             background: "none", border: "none", padding: 0, cursor: "pointer",
-            color: "rgba(59,130,246,0.7)", fontSize: 12, fontWeight: 500,
+            color: "rgba(167,139,250,0.8)", fontSize: 12, fontWeight: 500,
             letterSpacing: "0.05em", marginBottom: 14, fontFamily: "inherit",
             display: "flex", alignItems: "center", gap: 6,
           }}
@@ -1225,7 +1286,14 @@ function École42() {
   const t = useT().education
 
   return (
-    <Section id="education" style={{ background: "#1A1F2B" }}>
+    <Section id="education" style={{ background: "#1A1F2B", position: "relative", overflow: "hidden" }}>
+      {/* Purple nebula accent */}
+      <div style={{
+        position: "absolute", top: "-20%", right: "-10%", width: 480, height: 480,
+        borderRadius: "50%", pointerEvents: "none",
+        background: "radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%)",
+        filter: "blur(48px)",
+      }} />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
         <div>
           <SectionLabel dark>{t.sectionLabel}</SectionLabel>
@@ -1293,7 +1361,7 @@ function Projects() {
 
   return (
     <Section id="projects" style={{ background: "#F8F7F4" }}>
-      <SectionLabel>{t.sectionLabel}</SectionLabel>
+      <SectionLabel purple>{t.sectionLabel}</SectionLabel>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56 }}>
         <h2
           style={{
@@ -1388,14 +1456,23 @@ function Skills() {
 
   return (
     <Section id="skills" style={{ background: "#0B1220" }}>
-      <SectionLabel dark>{t.sectionLabel}</SectionLabel>
+      <SectionLabel dark purple>{t.sectionLabel}</SectionLabel>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2, gridAutoRows: "auto" }}>
-        {t.categories.map((cat) => (
+        {t.categories.map((cat, idx) => {
+          const isPurple = idx % 2 === 1
+          return (
           <div
             key={cat.label}
-            style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", padding: "36px 32px" }}
+            style={{
+              background: isPurple ? "rgba(139,92,246,0.04)" : "rgba(255,255,255,0.02)",
+              border: `1px solid ${isPurple ? "rgba(139,92,246,0.12)" : "rgba(255,255,255,0.06)"}`,
+              padding: "36px 32px",
+            }}
           >
-            <div style={{ color: "#3B82F6", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", marginBottom: 24 }}>
+            <div style={{
+              color: isPurple ? "#A78BFA" : "#3B82F6",
+              fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", marginBottom: 24,
+            }}>
               {cat.label.toUpperCase()}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -1404,7 +1481,7 @@ function Skills() {
               ))}
             </div>
           </div>
-        ))}
+        )})}
       </div>
     </Section>
   )
@@ -1418,8 +1495,12 @@ function SkillRow({ label }: { label: string }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ width: hovered ? 20 : 10, height: 1, background: hovered ? "#3B82F6" : "rgba(59,130,246,0.4)", transition: "all 0.2s" }} />
-      <span style={{ color: hovered ? "#F8F7F4" : "rgba(248,247,244,0.6)", fontSize: 14, fontWeight: 400, transition: "color 0.2s" }}>
+      <div style={{
+        width: hovered ? 20 : 10, height: 1,
+        background: hovered ? "linear-gradient(90deg, #3B82F6, #8B5CF6)" : "rgba(139,92,246,0.3)",
+        transition: "all 0.2s",
+      }} />
+      <span style={{ color: hovered ? "#C4B5FD" : "rgba(248,247,244,0.55)", fontSize: 14, fontWeight: 400, transition: "color 0.2s" }}>
         {label}
       </span>
     </div>
@@ -1475,7 +1556,13 @@ function Languages() {
   const t = useT().languages
 
   return (
-    <Section style={{ background: "#1A1F2B" }}>
+    <Section style={{ background: "#1A1F2B", position: "relative", overflow: "hidden" }}>
+      <div style={{
+        position: "absolute", bottom: "-15%", left: "-8%", width: 520, height: 520,
+        borderRadius: "50%", pointerEvents: "none",
+        background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)",
+        filter: "blur(52px)",
+      }} />
       <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 80, alignItems: "start" }}>
         <div>
           <SectionLabel dark>{t.sectionLabel}</SectionLabel>
@@ -1531,7 +1618,7 @@ function LanguageBar({ name, level, proficiency, tag }: { name: string; level: s
           style={{
             height: "100%",
             width: visible ? `${proficiency}%` : "0%",
-            background: "linear-gradient(90deg, #3B82F6, #60A5FA)",
+            background: "linear-gradient(90deg, #3B82F6 0%, #8B5CF6 60%, #A78BFA 100%)",
             transition: "width 0.9s cubic-bezier(0.4, 0, 0.2, 1)",
             transitionDelay: "0.1s",
           }}
@@ -1547,10 +1634,16 @@ function Contact() {
   const t = useT().contact
 
   return (
-    <section id="contact" style={{ background: "#0B1220", padding: "120px 0 80px" }}>
+    <section id="contact" style={{ background: "#0B1220", padding: "120px 0 80px", position: "relative", overflow: "hidden" }}>
+      <div style={{
+        position: "absolute", top: "10%", right: "5%", width: 600, height: 600,
+        borderRadius: "50%", pointerEvents: "none",
+        background: "radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 65%)",
+        filter: "blur(60px)",
+      }} />
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
         <div style={{ maxWidth: 640 }}>
-          <SectionLabel dark>{t.sectionLabel}</SectionLabel>
+          <SectionLabel dark purple>{t.sectionLabel}</SectionLabel>
           <h2
             style={{
               color: "#F8F7F4",
