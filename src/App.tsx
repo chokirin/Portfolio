@@ -13,7 +13,7 @@ const T = {
       contact: "Contact",
     },
     hero: {
-      badge: "OPEN TO OPPORTUNITIES · PARIS, FRANCE",
+      badge: "OPEN TO OPPORTUNITIES/Relocation · PARIS, FRANCE",
       headline1: "Bridging Business",
       headline2: "Strategy, Engineering",
       headline3: "& AI",
@@ -282,7 +282,7 @@ const T = {
       contact: "Contact",
     },
     hero: {
-      badge: "OUVERTE AUX OPPORTUNITÉS · PARIS, FRANCE",
+      badge: "OUVERTE AUX OPPORTUNITÉS/Relocation · PARIS, FRANCE",
       headline1: "Relier la Stratégie",
       headline2: "d'Entreprise, l'Ingénierie",
       headline3: "& l'IA",
